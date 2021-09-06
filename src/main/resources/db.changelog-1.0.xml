@@ -3,20 +3,25 @@
                    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-    <changeSet id="1" author="serg" dbms="sqlite, oracle">
+    <changeSet id="04.09.2021" author="alex" dbms="sqlite, oracle">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="department"/>
+                <tableExists tableName="usersName"/>
             </not>
         </preConditions>
-        <createTable tableName="department">
+        <createTable tableName="usersName">
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="name" type="varchar(50)">
+            <column name="login" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="active" type="boolean" defaultValueBoolean="true"/>
+            <column name="pass" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="nick" type="varchar(50)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 

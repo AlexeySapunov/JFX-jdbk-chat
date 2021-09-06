@@ -10,7 +10,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,12 +85,6 @@ public class Controller implements Initializable {
                             continue;
                         }
                         textArea.appendText(msgFromServer + "\n");
-                    }
-                } catch (SocketTimeoutException e) {
-                    try {
-                        throw e;
-                    } catch (SocketTimeoutException s) {
-                        s.printStackTrace();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
