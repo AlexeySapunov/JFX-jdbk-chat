@@ -1,5 +1,7 @@
 package ru.gb.server;
 
+import java.sql.SQLException;
+
 public interface AuthService {
-    String getNicknameByLoginAndPassword(String login, String password);
+    String getNicknameByLoginAndPassword(String login, String password) throws SQLException;
 }
