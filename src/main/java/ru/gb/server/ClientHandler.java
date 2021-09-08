@@ -4,10 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class ClientHandler {
 
@@ -15,8 +12,6 @@ public class ClientHandler {
     private final ChatServer server;
     private final DataInputStream in;
     private final DataOutputStream out;
-    private Connection connection;
-    private Statement statement;
 
     private String name;
 
@@ -43,22 +38,21 @@ public class ClientHandler {
     }
 
     private void authenticate() {
+
         try {
-            connect();
+            new SimpleAuthService().run();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            disconnect();
         }
 
         while (true) {
             try {
                 final String str = in.readUTF();
-                if (str.startsWith("/auth")) { // auth login1 pass1
+                if (str.startsWith("/auth")) {
                     final String[] split = str.split("\\s");
                     final String login = split[1];
-                    final String pass = split[2];
-                    final String nickname = server.getAuthService().getNicknameByLoginAndPassword(login, pass);
+                    final String password = split[2];
+                    final String nickname = server.getAuthService().getNicknameByLoginAndPassword(login, password);
                     if (nickname != null) {
                         if (!server.isNicknameBusy(nickname)) {
                             sendMessage("/authOk " + nickname);
@@ -73,7 +67,7 @@ public class ClientHandler {
                         sendMessage("Неверные логин или пароль");
                     }
                 }
-            } catch (IOException e) {
+            } catch (IOException | SQLException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }
@@ -130,27 +124,5 @@ public class ClientHandler {
 
     public String getName() {
         return name;
-    }
-
-    private void connect() throws SQLException {
-        connection = DriverManager.getConnection("jdbc:sqlite:javadb.db");
-        statement = connection.createStatement();
-    }
-
-    private void disconnect() {
-        if (statement != null) {
-            try {
-                statement.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-        if (connection != null) {
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }

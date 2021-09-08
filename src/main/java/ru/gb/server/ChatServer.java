@@ -3,6 +3,7 @@ package ru.gb.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ public class ChatServer {
     private final AuthService authService;
     private final List<ClientHandler> clients;
 
-    public ChatServer() {
+    public ChatServer() throws SQLException {
         clients = new ArrayList<>();
         authService = new SimpleAuthService();
 

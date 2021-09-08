@@ -6,23 +6,32 @@
     <changeSet id="04.09.2021" author="alex" dbms="sqlite, oracle">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="usersName"/>
+                <tableExists tableName="users"/>
             </not>
         </preConditions>
-        <createTable tableName="usersName">
+        <createTable tableName="users">
             <column name="id" type="int">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="login" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="pass" type="varchar(50)">
+            <column name="password" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
             <column name="nick" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
+    </changeSet>
+
+    <changeSet id="06.09.2021" author="alex" dbms="sqlite, oracle">
+        <insert tableName="users">
+            <column name="id" value="1"/>
+            <column name="login" value="login1"/>
+            <column name="password" value="pass1"/>
+            <column name="nick" value="nick1"/>
+        </insert>
     </changeSet>
 
 </databaseChangeLog>
