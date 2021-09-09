@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.sql.SQLException;
 
 public class ClientHandler {
 
@@ -37,14 +38,21 @@ public class ClientHandler {
     }
 
     private void authenticate() {
+
+        try {
+            new SimpleAuthService().run();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         while (true) {
             try {
                 final String str = in.readUTF();
-                if (str.startsWith("/auth")) { // auth login1 pass1
+                if (str.startsWith("/auth")) {
                     final String[] split = str.split("\\s");
                     final String login = split[1];
-                    final String pass = split[2];
-                    final String nickname = server.getAuthService().getNicknameByLoginAndPassword(login, pass);
+                    final String password = split[2];
+                    final String nickname = server.getAuthService().getNicknameByLoginAndPassword(login, password);
                     if (nickname != null) {
                         if (!server.isNicknameBusy(nickname)) {
                             sendMessage("/authOk " + nickname);
@@ -59,7 +67,7 @@ public class ClientHandler {
                         sendMessage("Неверные логин или пароль");
                     }
                 }
-            } catch (IOException e) {
+            } catch (IOException | SQLException e) {
                 e.printStackTrace();
                 throw new RuntimeException(e);
             }

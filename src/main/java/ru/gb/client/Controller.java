@@ -87,12 +87,6 @@ public class Controller implements Initializable {
                         }
                         textArea.appendText(msgFromServer + "\n");
                     }
-                } catch (SocketTimeoutException e) {
-                    try {
-                        throw e;
-                    } catch (SocketTimeoutException s) {
-                        s.printStackTrace();
-                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                     throw new RuntimeException(e);
