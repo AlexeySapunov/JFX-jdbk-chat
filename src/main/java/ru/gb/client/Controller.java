@@ -22,7 +22,6 @@ public class Controller implements Initializable {
     private DataOutputStream out;
     private DataInputStream in;
     private String nick;
-    private final File history = new File("C:\\Java\\gb-chatJava2Lsn7\\history.txt");
 
     @FXML
     public TextField regLogin;
@@ -94,8 +93,8 @@ public class Controller implements Initializable {
                             continue;
                         }
                         textArea.appendText(msgFromServer + "\n");
-                        loadHistory();
-                        saveHistory();
+                        History.loadHistory();
+                        History.saveHistory();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -171,50 +170,6 @@ public class Controller implements Initializable {
             textField.setText("/w " + nickname + " " + msg);
             textField.requestFocus();
             textField.selectEnd();
-        }
-    }
-
-    private void saveHistory() {
-        try (final PrintWriter fileWriter = new PrintWriter(new FileWriter(history, false));
-             final BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-            bufferedWriter.write(textArea.getText());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void loadHistory() {
-        int msgNum = 100;
-        if (!history.exists()) {
-            try {
-                history.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        try (final BufferedWriter writer = new BufferedWriter(new FileWriter(history))) {
-            writer.write(textArea.getText());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        final List<String> historyList = new ArrayList<>();
-        try (final FileInputStream in = new FileInputStream(history);
-             final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in))) {
-            String str;
-            while ((str = bufferedReader.readLine()) != null) {
-                historyList.add(str);
-            }
-//            if (historyList.size() > msgNum) {
-//                for (int i = historyList.size() - msgNum; i <= (historyList.size() - 1); i++) {
-//                    textArea.appendText(historyList.get(i) + "\n");
-//                }
-//            } else {
-//                for (int i = 0; i < msgNum; i++) {
-//                    System.out.println(historyList.get(i)); тут вылетает IndexOutOfBoundException, не успел разобраться
-//                }
-//            }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 
