@@ -1,0 +1,30 @@
+Неверные логин или пароль
+Успешная авторизация под ником nick2
+[You] nick2: вмыы
+[You] nick2: вмыы
+[You] nick2: мвым
+[You] nick2: мвым
+[You] nick2: вы
+[You] nick2: вы
+[You] nick2: м
+[You] nick2: м
+[You] nick2: м
+[You] nick2: м
+[You] nick2: вм
+[You] nick2: вм
+[You] nick2: мывыв
+[You] nick2: мывыв
+[You] nick2: мывм
+[You] nick2: мывм
+[You] nick2: ыв
+[You] nick2: ыв
+[You] nick2: мывм
+[You] nick2: мывм
+[You] nick2: ывм
+[You] nick2: ывм
+[You] nick2: м
+[You] nick2: м
+[You] nick2: м
+[You] nick2: м
+[You] nick2: ывм
+[You] nick2: ывм
