@@ -18,6 +18,7 @@ public class ChatServer {
 
         try(ServerSocket serverSocket = new ServerSocket(8189)) {
             System.out.println("SERVER: Server start...");
+            SimpleAuthService.connectBase();
             //noinspection InfiniteLoopStatement
             while (true) {
                 Socket socket = serverSocket.accept();
@@ -25,6 +26,8 @@ public class ChatServer {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            SimpleAuthService.disconnectBase();
         }
     }
 

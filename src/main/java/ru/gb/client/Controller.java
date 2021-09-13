@@ -5,11 +5,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import ru.gb.server.SimpleAuthService;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +24,14 @@ public class Controller implements Initializable {
     private String nick;
     private final File history = new File("C:\\Java\\gb-chatJava2Lsn7\\history.txt");
 
+    @FXML
+    public TextField regLogin;
+    @FXML
+    public PasswordField regPassword;
+    @FXML
+    public TextField regNick;
+    @FXML
+    public HBox regPanel;
     @FXML
     public HBox clientPanel;
     @FXML
@@ -112,6 +121,9 @@ public class Controller implements Initializable {
         authPanel.setVisible(!isAuthSuccess);
         authPanel.setManaged(!isAuthSuccess);
 
+        regPanel.setVisible(!isAuthSuccess);
+        regPanel.setManaged(!isAuthSuccess);
+
         msgPanel.setVisible(isAuthSuccess);
         msgPanel.setManaged(isAuthSuccess);
 
@@ -180,7 +192,7 @@ public class Controller implements Initializable {
                 e.printStackTrace();
             }
         }
-        try(final BufferedWriter writer = new BufferedWriter(new FileWriter(history))) {
+        try (final BufferedWriter writer = new BufferedWriter(new FileWriter(history))) {
             writer.write(textArea.getText());
         } catch (IOException e) {
             e.printStackTrace();
@@ -204,5 +216,16 @@ public class Controller implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void registration() throws SQLException {
+        if(socket == null || socket.isClosed()) {
+            connect();
+        }
+        SimpleAuthService.insertNewUsers(regLogin.getText(), regPassword.getText(), regNick.getText());
+        System.out.println("Поздравляем с успешной регистрацией.\nВойдите через форму авторизации. ");
+        regLogin.clear();
+        regPassword.clear();
+        regNick.clear();
     }
 }

@@ -10,6 +10,12 @@
         <PasswordField HBox.hgrow="ALWAYS" fx:id="passwordField" promptText="Пароль" onAction="#sendAuth"/>
         <Button HBox.hgrow="ALWAYS" onAction="#sendAuth" text="Подключиться"/>
     </HBox>
+    <HBox fx:id="regPanel">
+        <TextField HBox.hgrow="ALWAYS" promptText="Логин" fx:id="regLogin"/>
+        <PasswordField  promptText="Пароль" fx:id="regPassword" onAction="#registration"/>
+        <TextField HBox.hgrow="ALWAYS" promptText="Никнейм" fx:id="regNick"/>
+        <Button text="Зарегистрироваться" onAction="#registration"/>
+    </HBox>
     <HBox fx:id="clientPanel" VBox.vgrow="ALWAYS">
         <TextArea HBox.hgrow="ALWAYS" fx:id="textArea" editable="false"/>
         <ListView fx:id="clientList" minWidth="200" maxWidth="200" onMouseClicked="#selectClient"/>
