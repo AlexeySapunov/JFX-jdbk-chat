@@ -1,5 +1,8 @@
 package ru.gb.server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -12,12 +15,16 @@ public class ChatServer {
     private final AuthService authService;
     private final List<ClientHandler> clients;
 
+    public static final Logger logger = LogManager.getLogger(ChatServer.class);
+
     public ChatServer() throws SQLException {
         clients = new ArrayList<>();
         authService = new SimpleAuthService();
 
         try(ServerSocket serverSocket = new ServerSocket(8189)) {
             System.out.println("SERVER: Server start...");
+            logger.info("SERVER: Server start...");
+            SimpleAuthService.connectBase();
             //noinspection InfiniteLoopStatement
             while (true) {
                 Socket socket = serverSocket.accept();
@@ -25,6 +32,8 @@ public class ChatServer {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            SimpleAuthService.disconnectBase();
         }
     }
 

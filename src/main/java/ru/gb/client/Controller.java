@@ -5,11 +5,12 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import ru.gb.server.SimpleAuthService;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -21,8 +22,15 @@ public class Controller implements Initializable {
     private DataOutputStream out;
     private DataInputStream in;
     private String nick;
-    private final File history = new File("C:\\Java\\gb-chatJava2Lsn7\\history.txt");
 
+    @FXML
+    public TextField regLogin;
+    @FXML
+    public PasswordField regPassword;
+    @FXML
+    public TextField regNick;
+    @FXML
+    public HBox regPanel;
     @FXML
     public HBox clientPanel;
     @FXML
@@ -85,8 +93,8 @@ public class Controller implements Initializable {
                             continue;
                         }
                         textArea.appendText(msgFromServer + "\n");
-                        loadHistory();
-                        saveHistory();
+                        History.loadHistory();
+                        History.saveHistory();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -111,6 +119,9 @@ public class Controller implements Initializable {
     private boolean setAuth(boolean isAuthSuccess) {
         authPanel.setVisible(!isAuthSuccess);
         authPanel.setManaged(!isAuthSuccess);
+
+        regPanel.setVisible(!isAuthSuccess);
+        regPanel.setManaged(!isAuthSuccess);
 
         msgPanel.setVisible(isAuthSuccess);
         msgPanel.setManaged(isAuthSuccess);
@@ -162,47 +173,14 @@ public class Controller implements Initializable {
         }
     }
 
-    private void saveHistory() {
-        try (final PrintWriter fileWriter = new PrintWriter(new FileWriter(history, false));
-             final BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-            bufferedWriter.write(textArea.getText());
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void registration() throws SQLException {
+        if(socket == null || socket.isClosed()) {
+            connect();
         }
-    }
-
-    private void loadHistory() {
-        int msgNum = 100;
-        if (!history.exists()) {
-            try {
-                history.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        try(final BufferedWriter writer = new BufferedWriter(new FileWriter(history))) {
-            writer.write(textArea.getText());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        final List<String> historyList = new ArrayList<>();
-        try (final FileInputStream in = new FileInputStream(history);
-             final BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in))) {
-            String str;
-            while ((str = bufferedReader.readLine()) != null) {
-                historyList.add(str);
-            }
-//            if (historyList.size() > msgNum) {
-//                for (int i = historyList.size() - msgNum; i <= (historyList.size() - 1); i++) {
-//                    textArea.appendText(historyList.get(i) + "\n");
-//                }
-//            } else {
-//                for (int i = 0; i < msgNum; i++) {
-//                    System.out.println(historyList.get(i)); тут вылетает IndexOutOfBoundException, не успел разобраться
-//                }
-//            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        SimpleAuthService.insertNewUsers(regLogin.getText(), regPassword.getText(), regNick.getText());
+        System.out.println("Поздравляем с успешной регистрацией.\nВойдите через форму авторизации. ");
+        regLogin.clear();
+        regPassword.clear();
+        regNick.clear();
     }
 }

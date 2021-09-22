@@ -5,6 +5,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.sql.SQLException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ClientHandler {
 
@@ -15,6 +20,8 @@ public class ClientHandler {
 
     private String name;
 
+    public static final Logger logger = LogManager.getLogger(ClientHandler.class);
+
     public ClientHandler(Socket socket, ChatServer server) {
         try {
             this.name = "";
@@ -22,28 +29,28 @@ public class ClientHandler {
             this.server = server;
             this.in = new DataInputStream(socket.getInputStream());
             this.out = new DataOutputStream(socket.getOutputStream());
-            new Thread(() -> {
+            final ExecutorService service = Executors.newSingleThreadExecutor();
+            service.execute(() -> {
                 while (true) {
                     try {
                         authenticate();
                         readMessages();
+                        if (!service.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                            service.shutdownNow();
+                        }
+                    } catch (InterruptedException e) {
+                        service.shutdownNow();
                     } finally {
                         closeConnection();
                     }
                 }
-            }).start();
+            });
         } catch (IOException e) {
             throw new RuntimeException("Не могу создать обработчик для клиента", e);
         }
     }
 
     private void authenticate() {
-
-        try {
-            new SimpleAuthService().run();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
         while (true) {
             try {
@@ -58,13 +65,16 @@ public class ClientHandler {
                             sendMessage("/authOk " + nickname);
                             this.name = nickname;
                             server.broadcast("Пользователь " + nickname + " зашел в чат");
+                            logger.info("Пользователь " + nickname + " зашел в чат");
                             server.subscribe(this);
                             break;
                         } else {
                             sendMessage("Уже произведен вход в учетную запись");
+                            logger.info("Уже произведен вход в учетную запись");
                         }
                     } else {
                         sendMessage("Неверные логин или пароль");
+                        logger.info("Неверные логин или пароль");
                     }
                 }
             } catch (IOException | SQLException e) {
@@ -89,6 +99,7 @@ public class ClientHandler {
     public void sendMessage(String msg) {
         try {
             System.out.println("SERVER: Send message to " + name + ": " + msg);
+            logger.info("SERVER: Send message to " + name + ": " + msg);
             out.writeUTF(msg);
         } catch (IOException e) {
             e.printStackTrace();
@@ -113,6 +124,7 @@ public class ClientHandler {
                     continue;
                 }
                 System.out.println("Server: Получено сообщение от " + name + ": " + strFromClient);
+                logger.info("Server: Получено сообщение от " + name + ": " + strFromClient);
                 sendMessage(name + ": " + strFromClient);
                 server.broadcast(name + ": " + strFromClient);
             }

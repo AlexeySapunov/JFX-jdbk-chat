@@ -25,13 +25,4 @@
         </createTable>
     </changeSet>
 
-    <changeSet id="06.09.2021" author="alex" dbms="sqlite, oracle">
-        <insert tableName="users">
-            <column name="id" value="1"/>
-            <column name="login" value="login1"/>
-            <column name="password" value="pass1"/>
-            <column name="nick" value="nick1"/>
-        </insert>
-    </changeSet>
-
 </databaseChangeLog>
